@@ -186,10 +186,16 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                 ++training_data_distribution[1];
             }
             //batch_size ~>= batch_size
-            if (training_data->labels.size() >= batch_size) {
+            // added by me; fix retain
+            if (current_seq == (memory_window-1)){
                 train();
                 training_data->clear();
             }
+            // original retrain
+            //if (training_data->labels.size() >= batch_size) {
+            //    train();
+            //    training_data->clear();
+            //}
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -269,10 +275,16 @@ void LRBCache::forget() {
                 ++training_data_distribution[0];
             }
             //batch_size ~>= batch_size
-            if (training_data->labels.size() >= batch_size) {
+            // added by me; fix retain
+            if (current_seq == (memory_window-1)){
                 train();
                 training_data->clear();
             }
+            // original retrain
+            //if (training_data->labels.size() >= batch_size) {
+            //    train();
+            //    training_data->clear();
+            //}
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -558,10 +570,16 @@ void LRBCache::evict() {
                 ++training_data_distribution[0];
             }
             //batch_size ~>= batch_size
-            if (training_data->labels.size() >= batch_size) {
+            // added by me; fix retain
+            if (current_seq == (memory_window-1)){
                 train();
                 training_data->clear();
             }
+            // original retrain
+            //if (training_data->labels.size() >= batch_size) {
+            //    train();
+            //    training_data->clear();
+            //}
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }

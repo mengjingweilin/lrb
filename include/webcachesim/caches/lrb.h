@@ -38,7 +38,7 @@ namespace lrb {
     uint32_t max_hash_edc_idx;
     uint32_t memory_window = 67108864;
     uint32_t n_extra_fields = 0;
-    uint32_t batch_size = 131072;
+    uint32_t batch_size = 131072;  // 128 Kibibyte
     const uint max_n_extra_feature = 4;
     uint32_t n_feature;
     //TODO: interval clock should tick by event instead of following incoming packet time
