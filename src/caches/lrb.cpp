@@ -187,8 +187,9 @@ bool LRBCache::lookup(const SimpleRequest &req) {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq == (10000000-1)){
+            if (current_seq >= 10000000 && !trained){
                 train();
+                trained = true;
                 training_data->clear();
             }
             // original retrain
@@ -276,8 +277,9 @@ void LRBCache::forget() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq == (10000000-1)){
+            if (current_seq >= 10000000 && !trained){
                 train();
+                trained = true;
                 training_data->clear();
             }
             // original retrain
@@ -571,8 +573,9 @@ void LRBCache::evict() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq == (10000000-1)){
+            if (current_seq >= 10000000 && !trained){
                 train();
+                trained = true;
                 training_data->clear();
             }
             // original retrain

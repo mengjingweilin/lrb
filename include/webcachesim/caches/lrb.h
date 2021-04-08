@@ -28,6 +28,7 @@ using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::sub_array;
 
 namespace lrb {
+    bool trained = false;
     uint32_t current_seq = -1;
     uint8_t max_n_past_timestamps = 32;
     uint8_t max_n_past_distances = 31;
