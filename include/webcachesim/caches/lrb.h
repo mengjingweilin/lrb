@@ -479,7 +479,7 @@ public:
 #endif
 
     // sample_size: use n_memorize keys + random choose (sample_rate - n_memorize) keys
-    uint sample_rate = 64;
+    uint sample_rate = 100;  //FIXME: original is 64
 
     double training_loss = 0;
     int32_t n_force_eviction = 0;
@@ -604,7 +604,7 @@ public:
         }
         set_hash_edc();
         // FIXME: xinyue added, override sample rate with cache size
-        sample_rate = _cache_size;
+        //sample_rate = _cache_size;
 
         //interval, distances, size, extra_features, n_past_intervals, edwt
         n_feature = max_n_past_timestamps + n_extra_fields + 2 + n_edc_feature;
