@@ -30,10 +30,10 @@ using bsoncxx::builder::basic::sub_array;
 namespace lrb {
     bool trained = false;
     uint32_t current_seq = -1;
-    uint8_t max_n_past_timestamps = 1;  //origin is 32;
-    uint8_t max_n_past_distances = 1; //31;
+    uint8_t max_n_past_timestamps = 32;  //origin is 32;
+    uint8_t max_n_past_distances = 31; //31;
     uint8_t base_edc_window = 10;
-    const uint8_t n_edc_feature = 0;  //origin is 10;
+    const uint8_t n_edc_feature = 10;  //origin is 10;
     vector<uint32_t> edc_windows;
     vector<double> hash_edc;
     uint32_t max_hash_edc_idx;
@@ -603,6 +603,8 @@ public:
             edc_windows[i] = pow(2, base_edc_window + i);
         }
         set_hash_edc();
+        // FIXME: xinyue added, override sample rate with cache size
+        sample_rate = _cache_size;
 
         //interval, distances, size, extra_features, n_past_intervals, edwt
         n_feature = max_n_past_timestamps + n_extra_fields + 2 + n_edc_feature;
