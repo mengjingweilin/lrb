@@ -29,6 +29,7 @@ using bsoncxx::builder::basic::sub_array;
 
 namespace lrb {
     bool trained = false;
+    uint32_t train_count = 1;  // FIXME: added by xinyue
     uint32_t current_seq = -1;
     uint8_t max_n_past_timestamps = 32;  //origin is 32;
     uint8_t max_n_past_distances = 31; //31;
@@ -479,7 +480,7 @@ public:
 #endif
 
     // sample_size: use n_memorize keys + random choose (sample_rate - n_memorize) keys
-    uint sample_rate = 100;  //FIXME: original is 64
+    uint sample_rate = 64;  //original is 64
 
     double training_loss = 0;
     int32_t n_force_eviction = 0;
@@ -603,8 +604,6 @@ public:
             edc_windows[i] = pow(2, base_edc_window + i);
         }
         set_hash_edc();
-        // FIXME: xinyue added, override sample rate with cache size
-        //sample_rate = _cache_size;
 
         //interval, distances, size, extra_features, n_past_intervals, edwt
         n_feature = max_n_past_timestamps + n_extra_fields + 2 + n_edc_feature;
