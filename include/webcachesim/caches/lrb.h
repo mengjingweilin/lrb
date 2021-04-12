@@ -31,8 +31,8 @@ namespace lrb {
     bool trained = false;
     uint32_t train_count = 1;  // FIXME: added by xinyue
     uint32_t current_seq = -1;
-    uint8_t max_n_past_timestamps = 32;  //origin is 32;
-    uint8_t max_n_past_distances = 31; //31;
+    uint8_t max_n_past_timestamps = 2;  //Fixme: origin is 32;
+    uint8_t max_n_past_distances = 1; //Fixme:31;
     uint8_t base_edc_window = 10;
     const uint8_t n_edc_feature = 0;  // FIXME: origin is 10;
     vector<uint32_t> edc_windows;
