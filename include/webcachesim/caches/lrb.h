@@ -34,7 +34,7 @@ namespace lrb {
     uint8_t max_n_past_timestamps = 32;  //origin is 32;
     uint8_t max_n_past_distances = 31; //31;
     uint8_t base_edc_window = 10;
-    const uint8_t n_edc_feature = 10;  //origin is 10;
+    const uint8_t n_edc_feature = 0;  // FIXME: origin is 10;
     vector<uint32_t> edc_windows;
     vector<double> hash_edc;
     uint32_t max_hash_edc_idx;
