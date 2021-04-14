@@ -481,6 +481,7 @@ public:
 
     // sample_size: use n_memorize keys + random choose (sample_rate - n_memorize) keys
     uint sample_rate = 64;  //original is 64
+    ofstream log_file("/tmp/lrb_log.txt");
 
     double training_loss = 0;
     int32_t n_force_eviction = 0;
