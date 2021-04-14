@@ -61,7 +61,7 @@ Simulator will run a sanity check on the trace when starting up.
 
 ## Installation
 
-For ease of use, we also provide a docker image which contains the simulator. Our documentation assumes that you use this image. To run it:
+For ease of use, we provide a docker image which contains the simulator. Our documentation assumes that you use this image. To run it:
 ```shell script
  docker run -it -v ${YOUR TRACE DIRECTORY}:/trace sunnyszy/webcachesim ${traceFile} ${cacheType} ${cacheSize} [--param=value]
 ```
@@ -156,7 +156,7 @@ LRB memory window for Wikipedia trace different cache sizes in the paper (based 
 |   512  |  335544320  |
 |   1024  |  671088640 |
 
-## Automatically tuning LRB memory window on a new trace
+## Automatically tune LRB memory window on a new trace
 [LRB_WINDOW_TUNING.md](LRB_WINDOW_TUNING.md) describes how to tune LRB memory window on a new trace.
 
 ## Contributors are welcome
