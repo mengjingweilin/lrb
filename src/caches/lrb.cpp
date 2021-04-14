@@ -245,7 +245,7 @@ bool LRBCache::lookup(const SimpleRequest &req) {
     if (is_sampling) {
         sample();
     }
-
+    log_file << "current sequence num :" << current_seq << ", current request obj: " << req.id << ", is in cache? " << ret << endl;
     return ret;
 }
 
@@ -364,6 +364,8 @@ void LRBCache::admit(const SimpleRequest &req) {
         //start sampling once cache is filled up
         is_sampling = true;
     }
+
+    log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
     // check more eviction needed?
     while (_currentSize > _cacheSize) {
         evict();
@@ -550,7 +552,7 @@ void LRBCache::evict() {
     auto epair = rank();
     uint64_t &key = epair.first;
     uint32_t &old_pos = epair.second;
-    log_file << "evict:" << key << endl;
+    log_file << "current sequence num :" << current_seq << ", evict obj: " << key << endl;
 
 #ifdef EVICTION_LOGGING
     {
