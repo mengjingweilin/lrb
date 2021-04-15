@@ -187,10 +187,10 @@ bool LRBCache::lookup(const SimpleRequest &req) {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (500000 * train_count)){
+            if (current_seq >= (memory_window - 1) && !trained){
                 train();
-                //trained = true;
-                train_count += 1;
+                trained = true;
+                //train_count += 1;
                 training_data->clear();
             }
             // original retrain
@@ -278,10 +278,10 @@ void LRBCache::forget() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (500000 * train_count)){
+            if (current_seq >= (memory_window - 1) && !trained){
                 train();
-                train_count += 1;
-                //trained = true;
+                //train_count += 1;
+                trained = true;
                 training_data->clear();
             }
             // original retrain
@@ -544,7 +544,11 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 #endif
-
+    log_file << "current sequence num: " << current_req;
+    for (int i = 0; i < sample_rate; ++i) {
+        log_file << ", in-cache obj: " << keys[index[i]] << ", score is " << scores[index[i]];
+    }
+    log_file << endl;
     return {keys[index[0]], poses[index[0]]};
 }
 
@@ -578,10 +582,10 @@ void LRBCache::evict() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (500000 * train_count) ){
+            if (current_seq >= (memory_window - 1) && !trained){
                 train();
-                //trained = true;
-                train_count += 1;
+                trained = true;
+                //train_count += 1;
                 training_data->clear();
             }
             // original retrain
