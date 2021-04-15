@@ -544,9 +544,9 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 #endif
-    log_file << "current sequence num: " << current_req;
+    //log_file << "current sequence num: " << current_req;
     for (int i = 0; i < sample_rate; ++i) {
-        log_file << ", in-cache obj: " << keys[index[i]] << ", score is " << scores[index[i]];
+        log_file << ", in-cache obj: " << keys[index[i]] << ", score is: " << scores[index[i]];
     }
     log_file << endl;
     return {keys[index[0]], poses[index[0]]};
