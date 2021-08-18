@@ -187,10 +187,16 @@ bool LRBCache::lookup(const SimpleRequest &req) {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
-                trained = true;
+            //if (current_seq >= (memory_window - 1) && !trained){
+            //    train();
+            //    trained = true;
                 //train_count += 1;
+            //    training_data->clear();
+            //}
+            // added by me: retrain every memory_window
+            if (current_seq % (memory_window - 1) == 0){
+                train();
+                train_count += 1;
                 training_data->clear();
             }
             // original retrain
@@ -278,10 +284,16 @@ void LRBCache::forget() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
+            //if (current_seq >= (memory_window - 1) && !trained){
+            //    train();
                 //train_count += 1;
-                trained = true;
+            //    trained = true;
+            //    training_data->clear();
+            //}
+            // added by me: retrain every memory_window
+            if (current_seq % (memory_window - 1) == 0){
+                train();
+                train_count += 1;
                 training_data->clear();
             }
             // original retrain
@@ -643,10 +655,16 @@ void LRBCache::evict() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
-                trained = true;
+            //if (current_seq >= (memory_window - 1) && !trained){
+            //    train();
+            //    trained = true;
                 //train_count += 1;
+            //    training_data->clear();
+            //}
+            // added by me: retrain every memory_window
+            if (current_seq % (memory_window - 1) == 0){
+                train();
+                train_count += 1;
                 training_data->clear();
             }
             // original retrain
