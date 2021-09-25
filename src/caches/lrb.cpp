@@ -648,9 +648,9 @@ void LRBCache::evict() {
 
     // fixme: add by me
     if (current_seq >= memory_window){
-        auto it = future_timestamps.find(key);
-        // age, size, time_to_next_request
-        log_file << current_seq - meta._past_timestamp << "," << meta._size << ","<< static_cast<double>(it->second - current_seq) << endl;
+        //auto it = future_timestamps.find(key);
+        // sequence_id, obj_id, past_timestamp, size,
+        log_file << current_seq << "," << key << ", "<< meta._past_timestamp << "," << meta._size << endl;
     }
 
     if (memory_window <= current_seq - meta._past_timestamp) {
