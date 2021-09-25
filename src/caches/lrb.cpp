@@ -251,7 +251,7 @@ bool LRBCache::lookup(const SimpleRequest &req) {
     if (is_sampling) {
         sample();
     }
-    log_file << "current sequence num :" << current_seq << ", current request obj: " << req.id << ", is in cache? " << ret << endl;
+    //log_file << "current sequence num :" << current_seq << ", current request obj: " << req.id << ", is in cache? " << ret << endl;
     return ret;
 }
 
@@ -443,7 +443,7 @@ void LRBCache::admit(const SimpleRequest &req) {
         }
 
     }
-    log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
+    //log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
 }
 
 pair<uint64_t, uint32_t> LRBCache::rank() {
@@ -617,11 +617,11 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 #endif
-    log_file << "objects in cache and their scores : " ;
-    for (int i = 0; i < sample_rate; ++i) {
-        log_file << ", in-cache obj: " << keys[index[i]] << ", score is: " << scores[index[i]];
-    }
-    log_file << endl;
+    //log_file << "objects in cache and their scores : " ;
+    //for (int i = 0; i < sample_rate; ++i) {
+    //    log_file << ", in-cache obj: " << keys[index[i]] << ", score is: " << scores[index[i]];
+    //}
+    //log_file << endl;
     return {keys[index[0]], poses[index[0]]};
 }
 
@@ -629,7 +629,9 @@ void LRBCache::evict() {
     auto epair = rank();
     uint64_t &key = epair.first;
     uint32_t &old_pos = epair.second;
-    log_file << "current sequence num :" << current_seq << ", evict obj: " << key << endl;
+
+    // fixme: add by me
+    //log_file << "current sequence num :" << current_seq << ", evict obj: " << key << endl;
 
 #ifdef EVICTION_LOGGING
     {
@@ -643,6 +645,14 @@ void LRBCache::evict() {
 #endif
 
     auto &meta = in_cache_metas[old_pos];
+
+    // fixme: add by me
+    if (current_seq >= memory_window){
+        auto it = future_timestamps.find(key);
+        // age, size, time_to_next_request
+        log_file << current_seq - meta._past_timestamp << "," << meta._size << ","<< static_cast<double>(it->second - current_seq) << endl;
+    }
+
     if (memory_window <= current_seq - meta._past_timestamp) {
         //must be the tail of lru
         if (!meta._sample_times.empty()) {
