@@ -329,8 +329,8 @@ void LRBCache::forget() {
     }
 }
 
-/*
- * Fixme: original admit function
+
+// Fixme: original admit function
 void LRBCache::admit(const SimpleRequest &req) {
     const uint64_t &size = req.size;
     // object feasible to store?
@@ -385,9 +385,9 @@ void LRBCache::admit(const SimpleRequest &req) {
         evict();
     }
 }
-*/
 
 // Fixme: admition function by Xinyue, remove admission control, always let new object in
+/*
 void LRBCache::admit(const SimpleRequest &req) {
     const uint64_t &size = req.size;
     // object feasible to store?
@@ -445,6 +445,7 @@ void LRBCache::admit(const SimpleRequest &req) {
     }
     //log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
 }
+ */
 
 pair<uint64_t, uint32_t> LRBCache::rank() {
     {
