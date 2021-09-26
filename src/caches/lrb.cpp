@@ -457,6 +457,12 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
             if (booster) {
                 ++obj_distribution[1];
             }
+            if (meta._extra){
+                log_file << "LRU evict object:" << meta._key << ", has past distance num: "<< meta._extra->_past_distance_idx << endl;
+            }
+            else{
+                log_file << "LRU evict object:" << meta._key << endl;
+            }
             return {meta._key, pos};
         }
     }
@@ -465,7 +471,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     int32_t indptr[sample_rate + 1];
     indptr[0] = 0;
     int32_t indices[sample_rate * n_feature];
-    double data[sample_rate * n_feature];
+    double data[sample_rate * n_feature];  // input features
     int32_t past_timestamps[sample_rate];
     uint32_t sizes[sample_rate];
 
@@ -578,6 +584,13 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     if (objective == object_miss_ratio) {
         for (uint32_t i = 0; i < sample_rate; ++i)
             scores[i] *= sizes[i];
+    }
+
+    for (int i = 0; i < sample_rate; ++i) {
+        if (in_cache_metas[poses[i]]._extra)
+            if (in_cache_metas[poses[i]]._extra->_past_distance_idx < 31)
+                logfile << "infrequent obj id:" << keys[i] << ", sizes:" << sizes[i] << ", n_past:" <<
+                    in_cache_metas[poses[i]]._extra->_past_distance_idx << ", scores:" << scores[i] << endl;
     }
 
     vector<int> index(sample_rate, 0);
