@@ -331,6 +331,7 @@ void LRBCache::forget() {
 
 
 // Fixme: original admit function
+/*
 void LRBCache::admit(const SimpleRequest &req) {
     const uint64_t &size = req.size;
     // object feasible to store?
@@ -385,9 +386,9 @@ void LRBCache::admit(const SimpleRequest &req) {
         evict();
     }
 }
-
+*/
 // Fixme: admition function by Xinyue, remove admission control, always let new object in
-/*
+
 void LRBCache::admit(const SimpleRequest &req) {
     const uint64_t &size = req.size;
     // object feasible to store?
@@ -396,56 +397,53 @@ void LRBCache::admit(const SimpleRequest &req) {
         return;
     }
 
-    auto it = key_map.find(req.id);
-
-    if ( (_currentSize + size) > _cacheSize){
+    if ((_currentSize + size) > _cacheSize) {
         //start sampling once cache is filled up
         is_sampling = true;
-        // check more eviction needed?
-        while ( (_currentSize + size) > _cacheSize) {
-            evict();
-        }
     }
-    else {
-        if (it == key_map.end()) {
-            //fresh insert
-            key_map.insert({req.id, {0, (uint32_t) in_cache_metas.size()}});
-            auto lru_it = in_cache_lru_queue.request(req.id);
-#ifdef EVICTION_LOGGING
-            AnnotatedRequest *_req = (AnnotatedRequest *) &req;
-            in_cache_metas.emplace_back(req.id, req.size, current_seq, req.extra_features, _req->_next_seq, lru_it);
-#else
-            in_cache_metas.emplace_back(req.id, req.size, current_seq, req.extra_features, lru_it);
-#endif
-            _currentSize += size;
-            //this must be a fresh insert
-//        negative_candidate_queue.insert({(current_seq + memory_window)%memory_window, req.id});
-            if (_currentSize <= _cacheSize)
-                return;
-        } else {
-            //bring list 1 to list 0
-            //first move meta data, then modify hash table
-            uint32_t tail0_pos = in_cache_metas.size();
-            auto &meta = out_cache_metas[it->second.list_pos];
-            auto forget_timestamp = meta._past_timestamp % memory_window;
-            negative_candidate_queue->erase(forget_timestamp);
-            auto it_lru = in_cache_lru_queue.request(req.id);
-            in_cache_metas.emplace_back(out_cache_metas[it->second.list_pos], it_lru);
-            uint32_t tail1_pos = out_cache_metas.size() - 1;
-            if (it->second.list_pos != tail1_pos) {
-                //swap tail
-                out_cache_metas[it->second.list_pos] = out_cache_metas[tail1_pos];
-                key_map.find(out_cache_metas[tail1_pos]._key)->second.list_pos = it->second.list_pos;
-            }
-            out_cache_metas.pop_back();
-            it->second = {0, tail0_pos};
-            _currentSize += size;
-        }
+    // check more eviction needed?
+    while ((_currentSize + size) > _cacheSize) {
+        evict();
+    }
 
+    auto it = key_map.find(req.id);
+    if (it == key_map.end()) {
+        //fresh insert
+        key_map.insert({req.id, {0, (uint32_t) in_cache_metas.size()}});
+        auto lru_it = in_cache_lru_queue.request(req.id);
+#ifdef EVICTION_LOGGING
+        AnnotatedRequest *_req = (AnnotatedRequest *) &req;
+        in_cache_metas.emplace_back(req.id, req.size, current_seq, req.extra_features, _req->_next_seq, lru_it);
+#else
+        in_cache_metas.emplace_back(req.id, req.size, current_seq, req.extra_features, lru_it);
+#endif
+        _currentSize += size;
+        //this must be a fresh insert
+//        negative_candidate_queue.insert({(current_seq + memory_window)%memory_window, req.id});
+        if (_currentSize <= _cacheSize)
+            return;
+    } else {
+        //bring list 1 to list 0
+        //first move meta data, then modify hash table
+        uint32_t tail0_pos = in_cache_metas.size();
+        auto &meta = out_cache_metas[it->second.list_pos];
+        auto forget_timestamp = meta._past_timestamp % memory_window;
+        negative_candidate_queue->erase(forget_timestamp);
+        auto it_lru = in_cache_lru_queue.request(req.id);
+        in_cache_metas.emplace_back(out_cache_metas[it->second.list_pos], it_lru);
+        uint32_t tail1_pos = out_cache_metas.size() - 1;
+        if (it->second.list_pos != tail1_pos) {
+            //swap tail
+            out_cache_metas[it->second.list_pos] = out_cache_metas[tail1_pos];
+            key_map.find(out_cache_metas[tail1_pos]._key)->second.list_pos = it->second.list_pos;
+        }
+        out_cache_metas.pop_back();
+        it->second = {0, tail0_pos};
+        _currentSize += size;
     }
-    //log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
+    log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
 }
- */
+
 
 pair<uint64_t, uint32_t> LRBCache::rank() {
     {
