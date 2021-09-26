@@ -198,6 +198,8 @@ bsoncxx::builder::basic::document FrameWork::simulate() {
             req->reinit(seq, id, size, &extra_features);
 
         bool is_admitting = true;
+        // fixme: delete by me
+        /*
         if (true == bloom_filter) {
             bool exist_in_cache = webcache->exist(req->id);
             //in cache object, not consider bloom_filter
@@ -205,6 +207,7 @@ bsoncxx::builder::basic::document FrameWork::simulate() {
                 is_admitting = filter->exist_or_insert(id);
             }
         }
+         */
         if (is_admitting) {
             bool is_hit = webcache->lookup(*req);
             if (!is_hit) {
