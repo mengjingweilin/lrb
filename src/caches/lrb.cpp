@@ -278,6 +278,7 @@ void LRBCache::forget() {
         if (!meta._sample_times.empty()) {
             //mature
             // fixme: add by me
+            /*
             if (memory_window <= current_seq - meta._past_timestamp){
                 uint32_t future_distance = current_seq - meta._past_timestamp + memory_window;
                 for (auto &sample_time: meta._sample_times) {
@@ -286,16 +287,17 @@ void LRBCache::forget() {
                     ++training_data_distribution[0];
                 }
             }
+             */
             //todo: potential to overfill
             // fixme: original code
-            /*
+
             uint32_t future_distance = memory_window * 2;
             for (auto &sample_time: meta._sample_times) {
                 //don't use label within the first forget window because the data is not static
                 training_data->emplace_back(meta, sample_time, future_distance, meta._key);
                 ++training_data_distribution[0];
             }
-             */
+
             // end
             //batch_size ~>= batch_size
             // added by me; fix retain
@@ -679,13 +681,13 @@ void LRBCache::evict() {
     auto &meta = in_cache_metas[old_pos];
 
     // fixme: add by me
-    /*
-    if (current_seq >= memory_window){
+
+    if (current_seq >= 5000000){
         //auto it = future_timestamps.find(key);
         // sequence_id, obj_id, past_timestamp, size, memory_window
         log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << "," << memory_window << endl;
     }
-     */
+
 
     if (memory_window <= current_seq - meta._past_timestamp) {
         //must be the tail of lru
