@@ -602,10 +602,16 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 
+    // original is byte_miss_ratio
+    /*
     if (objective == object_miss_ratio) {
         for (uint32_t i = 0; i < sample_rate; ++i)
             scores[i] *= sizes[i];
     }
+     */
+    // fixme: change to object_miss_ratio
+    for (uint32_t i = 0; i < sample_rate; ++i)
+        scores[i] *= sizes[i];
     /*
     for (int i = 0; i < sample_rate; ++i) {
         if (in_cache_metas[poses[i]]._extra)
