@@ -187,12 +187,14 @@ bool LRBCache::lookup(const SimpleRequest &req) {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
+            /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
                 trained = true;
                 //train_count += 1;
                 training_data->clear();
             }
+             */
             // added by me: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
@@ -200,10 +202,10 @@ bool LRBCache::lookup(const SimpleRequest &req) {
             //    training_data->clear();
             //}
             // original retrain
-            //if (training_data->labels.size() >= batch_size) {
-            //    train();
-            //    training_data->clear();
-            //}
+            if (training_data->labels.size() >= batch_size) {
+                train();
+                training_data->clear();
+            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -284,12 +286,14 @@ void LRBCache::forget() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
+            /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
                 //train_count += 1;
                 trained = true;
                 training_data->clear();
             }
+             */
             // added by me: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
@@ -297,10 +301,10 @@ void LRBCache::forget() {
             //    training_data->clear();
             //}
             // original retrain
-            //if (training_data->labels.size() >= batch_size) {
-            //    train();
-            //    training_data->clear();
-            //}
+            if (training_data->labels.size() >= batch_size) {
+                train();
+                training_data->clear();
+            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -441,7 +445,7 @@ void LRBCache::admit(const SimpleRequest &req) {
         it->second = {0, tail0_pos};
         _currentSize += size;
     }
-    log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
+    //log_file << "current sequence num :" << current_seq << ", admit obj: " << req.id << endl;
 }
 
 
@@ -457,12 +461,14 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
             if (booster) {
                 ++obj_distribution[1];
             }
+            /*
             if (meta._extra){
                 log_file << "LRU evict object:" << meta._key << ", has past distance num: "<< meta._extra->_past_distance_idx << endl;
             }
             else{
                 log_file << "LRU evict object:" << meta._key << endl;
             }
+             */
             return {meta._key, pos};
         }
     }
@@ -585,13 +591,14 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         for (uint32_t i = 0; i < sample_rate; ++i)
             scores[i] *= sizes[i];
     }
-
+    /*
     for (int i = 0; i < sample_rate; ++i) {
         if (in_cache_metas[poses[i]]._extra)
             if (in_cache_metas[poses[i]]._extra->_past_distance_idx < 31)
-                logfile << "infrequent obj id:" << keys[i] << ", sizes:" << sizes[i] << ", n_past:" <<
+                log_file << "infrequent obj id:" << keys[i] << ", sizes:" << sizes[i] << ", n_past:" <<
                     in_cache_metas[poses[i]]._extra->_past_distance_idx << ", scores:" << scores[i] << endl;
     }
+     */
 
     vector<int> index(sample_rate, 0);
     for (int i = 0; i < index.size(); ++i) {
@@ -659,11 +666,13 @@ void LRBCache::evict() {
     auto &meta = in_cache_metas[old_pos];
 
     // fixme: add by me
+    /*
     if (current_seq >= memory_window){
         //auto it = future_timestamps.find(key);
         // sequence_id, obj_id, past_timestamp, size, memory_window
         log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << "," << memory_window << endl;
     }
+     */
 
     if (memory_window <= current_seq - meta._past_timestamp) {
         //must be the tail of lru
@@ -677,12 +686,14 @@ void LRBCache::evict() {
             }
             //batch_size ~>= batch_size
             // added by me; fix retain
+            /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
                 trained = true;
                 //train_count += 1;
                 training_data->clear();
             }
+             */
             // added by me: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
@@ -690,10 +701,10 @@ void LRBCache::evict() {
             //    training_data->clear();
             //}
             // original retrain
-            //if (training_data->labels.size() >= batch_size) {
-            //    train();
-            //    training_data->clear();
-            //}
+            if (training_data->labels.size() >= batch_size) {
+                train();
+                training_data->clear();
+            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
