@@ -186,7 +186,7 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                 ++training_data_distribution[1];
             }
             //batch_size ~>= batch_size
-            // added by me; fix retain
+            // fixme; fix retain
             /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
@@ -195,7 +195,7 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                 training_data->clear();
             }
              */
-            // added by me: retrain every memory_window
+            // fixme: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
             //    train_count += 1;
@@ -277,20 +277,7 @@ void LRBCache::forget() {
         //timeout mature
         if (!meta._sample_times.empty()) {
             //mature
-            // fixme: add by me
-            /*
-            if (memory_window <= current_seq - meta._past_timestamp){
-                uint32_t future_distance = current_seq - meta._past_timestamp + memory_window;
-                for (auto &sample_time: meta._sample_times) {
-                    //don't use label within the first forget window because the data is not static
-                    training_data->emplace_back(meta, sample_time, future_distance, meta._key);
-                    ++training_data_distribution[0];
-                }
-            }
-             */
             //todo: potential to overfill
-            // fixme: original code
-
             uint32_t future_distance = memory_window * 2;
             for (auto &sample_time: meta._sample_times) {
                 //don't use label within the first forget window because the data is not static
@@ -300,7 +287,7 @@ void LRBCache::forget() {
 
             // end
             //batch_size ~>= batch_size
-            // added by me; fix retain
+            // fixme; fix retain
             /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
@@ -309,7 +296,7 @@ void LRBCache::forget() {
                 training_data->clear();
             }
              */
-            // added by me: retrain every memory_window
+            // fixme: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
             //    train_count += 1;
@@ -543,7 +530,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
 
         indices[idx_feature] = max_n_past_timestamps;
-        data[idx_feature++] = meta._size;
+        data[idx_feature++] = 1;  //fixme: meta._size;  oremove distance feature
         sizes[idx_row] = meta._size;
 
         for (uint k = 0; k < n_extra_fields; ++k) {
@@ -587,6 +574,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
                               inference_params,
                               &len,
                               scores);
+    // todo: use LGBM to predict the score/next-arrival-time of objects on synthetic data with/without size as a feature
     if (!(current_seq % 10000))
         inference_time = 0.95 * inference_time +
                          0.05 *
@@ -603,15 +591,15 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     }
 
     // original is byte_miss_ratio
-    /*
     if (objective == object_miss_ratio) {
         for (uint32_t i = 0; i < sample_rate; ++i)
             scores[i] *= sizes[i];
     }
-     */
     // fixme: change to object_miss_ratio
+    /*
     for (uint32_t i = 0; i < sample_rate; ++i)
         scores[i] *= sizes[i];
+    */
     /*
     for (int i = 0; i < sample_rate; ++i) {
         if (in_cache_metas[poses[i]]._extra)
@@ -657,11 +645,16 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 #endif
-    //log_file << "objects in cache and their scores : " ;
-    //for (int i = 0; i < sample_rate; ++i) {
-    //    log_file << ", in-cache obj: " << keys[index[i]] << ", score is: " << scores[index[i]];
-    //}
-    //log_file << endl;
+    // fixme: add by me
+    if (current_seq >= 5000000){
+        log_file << "current sequence is:" << current_seq << endl ;
+        // sampled objects
+        for (int i = 0; i < sample_rate; ++i) {
+            log_file << keys[index[i]] << ",";
+        }
+        log_file << endl;
+        log_file << "evicted object score is:" << scores[index[0]] << endl;
+    }
     return {keys[index[0]], poses[index[0]]};
 }
 
@@ -669,9 +662,6 @@ void LRBCache::evict() {
     auto epair = rank();
     uint64_t &key = epair.first;
     uint32_t &old_pos = epair.second;
-
-    // fixme: add by me
-    //log_file << "current sequence num :" << current_seq << ", evict obj: " << key << endl;
 
 #ifdef EVICTION_LOGGING
     {
@@ -687,11 +677,10 @@ void LRBCache::evict() {
     auto &meta = in_cache_metas[old_pos];
 
     // fixme: add by me
-
     if (current_seq >= 5000000){
         //auto it = future_timestamps.find(key);
-        // sequence_id, obj_id, past_timestamp, size, memory_window
-        log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << "," << memory_window << endl;
+        // sequence_id, obj_id, past_timestamp, size
+        log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << endl;
     }
 
 
@@ -706,7 +695,7 @@ void LRBCache::evict() {
                 ++training_data_distribution[0];
             }
             //batch_size ~>= batch_size
-            // added by me; fix retain
+            // fixme: fix retain
             /*
             if (current_seq >= (memory_window - 1) && !trained){
                 train();
@@ -715,7 +704,7 @@ void LRBCache::evict() {
                 training_data->clear();
             }
              */
-            // added by me: retrain every memory_window
+            // fixme: retrain every memory_window
             //if (current_seq % (memory_window - 1) == 0){
             //    train();
             //    train_count += 1;

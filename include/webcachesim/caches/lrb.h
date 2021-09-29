@@ -277,7 +277,7 @@ public:
         counter += j;
 
         indices.emplace_back(max_n_past_timestamps);
-        data.push_back(meta._size);
+        data.push_back(1);  // fixme: meta._size; remove size feature
         ++counter;
 
         for (int k = 0; k < n_extra_fields; ++k) {
@@ -391,7 +391,7 @@ public:
         counter += j;
 
         indices.emplace_back(max_n_past_timestamps);
-        data.push_back(meta._size);
+        data.push_back(1);  //fixme: meta._size; remove size feature
         ++counter;
 
         for (int k = 0; k < n_extra_fields; ++k) {
