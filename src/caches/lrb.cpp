@@ -530,7 +530,11 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
 
         indices[idx_feature] = max_n_past_timestamps;
-        data[idx_feature++] = 1;  //fixme: meta._size;  oremove distance feature
+        if (no_sizeFeature == 1) {
+            data[idx_feature++] = 1;  // fixme: meta._size; remove size feature
+        } else {
+            data[idx_feature++] = meta._size;
+        }
         sizes[idx_row] = meta._size;
 
         for (uint k = 0; k < n_extra_fields; ++k) {

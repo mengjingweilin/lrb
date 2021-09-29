@@ -29,12 +29,14 @@ using bsoncxx::builder::basic::sub_array;
 
 namespace lrb {
     bool trained = false;
-    uint32_t train_count = 1;  // FIXME: added by xinyue
+    uint32_t train_count = 1;   // FIXME: added by xinyue
+    uint8_t no_sizeFeature = 0;  // FIXME: added by xinyue
     uint32_t current_seq = -1;
     uint8_t max_n_past_timestamps = 32;  //Fixme: origin is 32;
     uint8_t max_n_past_distances = 31; //Fixme:origin is 31;
     uint8_t base_edc_window = 10;
-    const uint8_t n_edc_feature = 10;  // FIXME: origin is 10;
+    //const uint8_t n_edc_feature = 10;  // FIXME: origin is 10;
+    int8_t n_edc_feature = 10;
     vector<uint32_t> edc_windows;
     vector<double> hash_edc;
     uint32_t max_hash_edc_idx;
@@ -277,7 +279,11 @@ public:
         counter += j;
 
         indices.emplace_back(max_n_past_timestamps);
-        data.push_back(1);  // fixme: meta._size; remove size feature
+        if (no_sizeFeature == 1) {
+            data.push_back(1);  // fixme: meta._size; remove size feature
+        } else {
+            data.push_back(meta._size);
+        }
         ++counter;
 
         for (int k = 0; k < n_extra_fields; ++k) {
@@ -391,7 +397,11 @@ public:
         counter += j;
 
         indices.emplace_back(max_n_past_timestamps);
-        data.push_back(1);  //fixme: meta._size; remove size feature
+        if (no_sizeFeature == 1) {
+            data.push_back(1);  // fixme: meta._size; remove size feature
+        } else {
+            data.push_back(meta._size);
+        }
         ++counter;
 
         for (int k = 0; k < n_extra_fields; ++k) {
@@ -579,8 +589,9 @@ public:
 #endif
             } else if (it.first == "n_edc_feature") {
                 if (stoull(it.second) != n_edc_feature) {
+                    n_edc_feature = (uint8_t) stoi(it.second); // fixme: change n_edc_feature to be ajustable
                     cerr << "error: cannot change n_edc_feature because of const" << endl;
-                    abort();
+                    //abort();  // fixme: remove by me
                 }
 //                n_edc_feature = stoull(it.second);
             } else if (it.first == "objective") {
@@ -592,6 +603,8 @@ public:
                     cerr << "error: unknown objective" << endl;
                     exit(-1);
                 }
+            } else if (it.first == "no_sizeFeature") {
+                no_sizeFeature = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control size as an input feature
             } else {
                 cerr << "LRB unrecognized parameter: " << it.first << endl;
             }
