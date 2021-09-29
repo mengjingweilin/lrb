@@ -31,6 +31,7 @@ namespace lrb {
     bool trained = false;
     uint32_t train_count = 1;   // FIXME: added by xinyue
     uint8_t no_sizeFeature = 0;  // FIXME: added by xinyue
+    uint8_t no_nwithin = 0;  // FIXME: added by xinyue
     uint32_t current_seq = -1;
     uint8_t max_n_past_timestamps = 32;  //Fixme: origin is 32;
     uint8_t max_n_past_distances = 31; //Fixme:origin is 31;
@@ -293,7 +294,11 @@ public:
         counter += n_extra_fields;
 
         indices.push_back(max_n_past_timestamps + n_extra_fields + 1);
-        data.push_back(n_within);
+        if (no_nwithin == 1) {
+            data.push_back(0);  // fixme: meta._size; remove n_within feature
+        } else {
+            data.push_back(n_within);
+        }
         ++counter;
 
         if (meta._extra) {
@@ -411,7 +416,11 @@ public:
         counter += n_extra_fields;
 
         indices.push_back(max_n_past_timestamps + n_extra_fields + 1);
-        data.push_back(n_within);
+        if (no_nwithin == 1) {
+            data.push_back(0);  // fixme: meta._size; remove n_within feature
+        } else {
+            data.push_back(n_within);
+        }
         ++counter;
 
         if (meta._extra) {
@@ -605,6 +614,8 @@ public:
                 }
             } else if (it.first == "no_sizeFeature") {
                 no_sizeFeature = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control size as an input feature
+            } else if (it.first == "no_nwithin") {
+                no_nwithin = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control nwithin as an input feature
             } else {
                 cerr << "LRB unrecognized parameter: " << it.first << endl;
             }

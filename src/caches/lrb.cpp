@@ -543,7 +543,11 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
 
         indices[idx_feature] = max_n_past_timestamps + n_extra_fields + 1;
-        data[idx_feature++] = n_within;
+        if (no_nwithin == 1) {
+            data[idx_feature++] = 0;  // fixme: meta._size; remove n_within feature
+        } else {
+            data[idx_feature++] = n_within;
+        }
 
         for (uint8_t k = 0; k < n_edc_feature; ++k) {
             indices[idx_feature] = max_n_past_timestamps + n_extra_fields + 2 + k;
