@@ -620,6 +620,7 @@ public:
                 no_nwithin = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control nwithin as an input feature
             } else if (it.first == "no_LRU") {
                 no_LRU = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control no_LRU as an input feature
+                cerr << "no_LRU: " << no_LRU << endl;
             } else if (it.first == "log_start_seq") {
                 log_start_seq = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control log_start_seq as an input feature
             } else {

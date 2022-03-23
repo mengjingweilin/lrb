@@ -453,21 +453,22 @@ void LRBCache::admit(const SimpleRequest &req) {
 
 pair<uint64_t, uint32_t> LRBCache::rank() {
     {
-        //if not trained yet, or in_cache_lru past memory window, use LRU
-        auto &candidate_key = in_cache_lru_queue.dq.back();
-        auto it = key_map.find(candidate_key);
-        auto pos = it->second.list_pos;
-        auto &meta = in_cache_metas[pos];
-        if (no_LRU == 1) {
+        if (no_LRU == 1 ){
+            auto &candidate_key = in_cache_lru_queue.dq.back();
+            auto it = key_map.find(candidate_key);
+            auto pos = it->second.list_pos;
+            auto &meta = in_cache_metas[pos];
             if (!booster) {
                 //this use LRU force eviction, consider sampled a beyond boundary object
-                if (booster) {
-                    ++obj_distribution[1];
-                }
                 return {meta._key, pos};
             }
         }
         else{
+            //if not trained yet, or in_cache_lru past memory window, use LRU
+            auto &candidate_key = in_cache_lru_queue.dq.back();
+            auto it = key_map.find(candidate_key);
+            auto pos = it->second.list_pos;
+            auto &meta = in_cache_metas[pos];
             if ((!booster) || (memory_window <= current_seq - meta._past_timestamp)) {
                 //this use LRU force eviction, consider sampled a beyond boundary object
                 if (booster) {
