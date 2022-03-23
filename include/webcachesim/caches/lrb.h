@@ -32,9 +32,11 @@ namespace lrb {
     uint32_t train_count = 1;   // FIXME: added by xinyue
     uint8_t no_sizeFeature = 0;  // FIXME: added by xinyue
     uint8_t no_nwithin = 0;  // FIXME: added by xinyue
+    uint8_t no_LRU = 0;  //FIXME: added by xinyue
+    uint8_t log_start_seq = -1;  //Fixme: added by xinyue
     uint32_t current_seq = -1;
-    uint8_t max_n_past_timestamps = 32;  //Fixme: origin is 32;
-    uint8_t max_n_past_distances = 31; //Fixme:origin is 31;
+    uint8_t max_n_past_timestamps = 32;
+    uint8_t max_n_past_distances = 31;
     uint8_t base_edc_window = 10;
     //const uint8_t n_edc_feature = 10;  // FIXME: origin is 10;
     int8_t n_edc_feature = 10;
@@ -616,6 +618,10 @@ public:
                 no_sizeFeature = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control size as an input feature
             } else if (it.first == "no_nwithin") {
                 no_nwithin = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control nwithin as an input feature
+            } else if (it.first == "no_LRU") {
+                no_LRU = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control no_LRU as an input feature
+            } else if (it.first == "log_start_seq") {
+                log_start_seq = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control log_start_seq as an input feature
             } else {
                 cerr << "LRB unrecognized parameter: " << it.first << endl;
             }

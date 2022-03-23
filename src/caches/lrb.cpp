@@ -458,20 +458,31 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         auto it = key_map.find(candidate_key);
         auto pos = it->second.list_pos;
         auto &meta = in_cache_metas[pos];
-        if ((!booster) || (memory_window <= current_seq - meta._past_timestamp)) {
-            //this use LRU force eviction, consider sampled a beyond boundary object
-            if (booster) {
-                ++obj_distribution[1];
+        if (no_LRU == 1) {
+            if (!booster) {
+                //this use LRU force eviction, consider sampled a beyond boundary object
+                if (booster) {
+                    ++obj_distribution[1];
+                }
+                return {meta._key, pos};
             }
-            /*
-            if (meta._extra){
-                log_file << "LRU evict object:" << meta._key << ", has past distance num: "<< meta._extra->_past_distance_idx << endl;
+        }
+        else{
+            if ((!booster) || (memory_window <= current_seq - meta._past_timestamp)) {
+                //this use LRU force eviction, consider sampled a beyond boundary object
+                if (booster) {
+                    ++obj_distribution[1];
+                }
+                /*
+                if (meta._extra){
+                    log_file << "LRU evict object:" << meta._key << ", has past distance num: "<< meta._extra->_past_distance_idx << endl;
+                }
+                else{
+                    log_file << "LRU evict object:" << meta._key << endl;
+                }
+                 */
+                return {meta._key, pos};
             }
-            else{
-                log_file << "LRU evict object:" << meta._key << endl;
-            }
-             */
-            return {meta._key, pos};
         }
     }
 
@@ -654,7 +665,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     }
 #endif
     // fixme: add by me
-    if (current_seq >= 5000000){
+    if (log_start_seq >=0 && current_seq >= log_start_seq){
         log_file << "current sequence is:" << current_seq << endl ;
         // sampled objects
         for (int i = 0; i < sample_rate; ++i) {
@@ -685,7 +696,7 @@ void LRBCache::evict() {
     auto &meta = in_cache_metas[old_pos];
 
     // fixme: add by me
-    if (current_seq >= 5000000){
+    if (log_start_seq >=0 && current_seq >= log_start_seq){
         //auto it = future_timestamps.find(key);
         // sequence_id, obj_id, past_timestamp, size
         log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << endl;
