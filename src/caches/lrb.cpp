@@ -473,6 +473,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
                 //this use LRU force eviction, consider sampled a beyond boundary object
                 if (booster) {
                     ++obj_distribution[1];
+                    cerr << "LRU eviction when booster is available! " << endl;
                 }
                 /*
                 if (meta._extra){
