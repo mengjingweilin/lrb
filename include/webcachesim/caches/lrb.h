@@ -601,6 +601,7 @@ public:
             } else if (it.first == "n_edc_feature") {
                 if (stoull(it.second) != n_edc_feature) {
                     n_edc_feature = (uint8_t) stoi(it.second); // fixme: change n_edc_feature to be ajustable
+                    cerr << "n_edc_feature: " << it.first << it.second << n_edc_feature << endl;
                     cerr << "error: cannot change n_edc_feature because of const" << endl;
                     //abort();  // fixme: remove by me
                 }
@@ -616,13 +617,16 @@ public:
                 }
             } else if (it.first == "no_sizeFeature") {
                 no_sizeFeature = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control size as an input feature
+                cerr << "no_sizeFeature: " << it.first << it.second << no_sizeFeature << endl;
             } else if (it.first == "no_nwithin") {
                 no_nwithin = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control nwithin as an input feature
+                cerr << "no_nwithin: " << it.first << it.second << no_nwithin << endl;
             } else if (it.first == "no_LRU") {
                 no_LRU = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control no_LRU as an input feature
-                cerr << "no_LRU: " << no_LRU << endl;
+                cerr << "no_LRU: " << it.first << it.second << no_LRU << endl;
             } else if (it.first == "log_start_seq") {
                 log_start_seq = (uint8_t) stoi(it.second);  // fixme: add additional int parameter to control log_start_seq as an input feature
+                cerr << "log_start_seq: " << it.first << it.second << log_start_seq << endl;
             } else {
                 cerr << "LRB unrecognized parameter: " << it.first << endl;
             }
