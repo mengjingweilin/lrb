@@ -488,24 +488,31 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         }
     }
 
+    uint current_sample_rate = 0;  //fixme
+    if (in_cache_lru_queue.dq.size() < sample_rate) {
+        current_sample_rate = in_cache_lru_queue.dq.size();
+    }
+    else{
+        current_sample_rate = sample_rate;
+    }
 
-    int32_t indptr[sample_rate + 1];
+    int32_t indptr[current_sample_rate + 1];
     indptr[0] = 0;
-    int32_t indices[sample_rate * n_feature];
-    double data[sample_rate * n_feature];  // input features
-    int32_t past_timestamps[sample_rate];
-    uint32_t sizes[sample_rate];
+    int32_t indices[current_sample_rate * n_feature];
+    double data[current_sample_rate * n_feature];  // input features
+    int32_t past_timestamps[current_sample_rate];
+    uint32_t sizes[current_sample_rate];
 
     unordered_set<uint64_t> key_set;
-    uint64_t keys[sample_rate];
-    uint32_t poses[sample_rate];
+    uint64_t keys[current_sample_rate];
+    uint32_t poses[current_sample_rate];
     //next_past_timestamp, next_size = next_indptr - 1
 
     unsigned int idx_feature = 0;
     unsigned int idx_row = 0;
 
-    auto n_new_sample = sample_rate - idx_row;
-    while (idx_row != sample_rate) {
+    auto n_new_sample = current_sample_rate - idx_row;
+    while (idx_row != current_sample_rate) {
         uint32_t pos = _distribution(_generator) % in_cache_metas.size();
         auto &meta = in_cache_metas[pos];
         if (key_set.find(meta._key) != key_set.end()) {
@@ -576,7 +583,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     }
 
     int64_t len;
-    double scores[sample_rate];
+    double scores[current_sample_rate];
     system_clock::time_point timeBegin;
     //sample to measure inference time
     if (!(current_seq % 10000))
@@ -602,7 +609,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
                          chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - timeBegin).count();
 //    for (int i = 0; i < n_sample; ++i)
 //        result[i] -= (t - past_timestamps[i]);
-    for (int i = sample_rate - n_new_sample; i < sample_rate; ++i) {
+    for (int i = current_sample_rate - n_new_sample; i < current_sample_rate; ++i) {
         //only monitor at the end of change interval
         if (scores[i] >= log1p(memory_window)) {
             ++obj_distribution[1];
@@ -613,7 +620,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
 
     // original is byte_miss_ratio
     if (objective == object_miss_ratio) {
-        for (uint32_t i = 0; i < sample_rate; ++i)
+        for (uint32_t i = 0; i < current_sample_rate; ++i)
             scores[i] *= sizes[i];
     }
     // fixme: change to object_miss_ratio
@@ -630,7 +637,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     }
      */
 
-    vector<int> index(sample_rate, 0);
+    vector<int> index(current_sample_rate, 0);
     for (int i = 0; i < index.size(); ++i) {
         index[i] = i;
     }
@@ -645,7 +652,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     {
         if (start_train_logging) {
 //            training_and_prediction_logic_timestamps.emplace_back(current_seq / 65536);
-            for (int i = 0; i < sample_rate; ++i) {
+            for (int i = 0; i < current_sample_rate; ++i) {
                 int current_idx = indptr[i];
                 for (int p = 0; p < n_feature; ++p) {
                     if (p == indices[current_idx]) {
@@ -670,7 +677,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     if (log_start_seq >=0 && current_seq >= log_start_seq){
         log_file << "current sequence is:" << current_seq << endl ;
         // sampled objects
-        for (int i = 0; i < sample_rate; ++i) {
+        for (int i = 0; i < current_sample_rate; ++i) {
             log_file << keys[index[i]] << ",";
         }
         log_file << endl;
