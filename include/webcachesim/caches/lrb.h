@@ -260,7 +260,7 @@ public:
         int32_t counter = indptr.back();
 
         indices.emplace_back(0);
-        data.emplace_back(sample_timestamp - meta._past_timestamp);
+        data.emplace_back(sample_timestamp - meta._past_timestamp); //age
         ++counter;
 
         uint32_t this_past_distance = 0;
@@ -529,7 +529,7 @@ public:
     unordered_map<string, string> inference_params;
 
     enum ObjectiveT : uint8_t {
-        byte_miss_ratio = 0, object_miss_ratio = 1
+        byte_miss_ratio = 0, object_miss_ratio = 1, real_OHR=2,
     };
     ObjectiveT objective = byte_miss_ratio;
 
@@ -611,6 +611,8 @@ public:
                     objective = byte_miss_ratio;
                 else if (it.second == "object_miss_ratio")
                     objective = object_miss_ratio;
+                else if (it.second == "real_OHR")
+                    objective = real_OHR;
                 else {
                     cerr << "error: unknown objective" << endl;
                     exit(-1);

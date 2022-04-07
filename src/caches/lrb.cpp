@@ -247,6 +247,8 @@ bool LRBCache::lookup(const SimpleRequest &req) {
         ret = !list_idx;
     } else {
         ret = false;
+        // cache miss, log seq_num,obj_id
+        log_file << current_seq << "," << req.id << endl;
     }
 
     //sampling happens late to prevent immediate re-request
@@ -623,11 +625,11 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         for (uint32_t i = 0; i < current_sample_rate; ++i)
             scores[i] *= sizes[i];
     }
-    // fixme: change to object_miss_ratio
-    /*
-    for (uint32_t i = 0; i < sample_rate; ++i)
-        scores[i] *= sizes[i];
-    */
+    if (objective == real_OHR){
+        for (uint32_t i = 0; i < current_sample_rate; ++i)
+            scores[i] += log1p(sizes[i]);
+    }
+
     /*
     for (int i = 0; i < sample_rate; ++i) {
         if (in_cache_metas[poses[i]]._extra)
