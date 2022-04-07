@@ -676,6 +676,7 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
     }
 #endif
     // fixme: add by me
+    /*
     if (log_start_seq >=0 && current_seq >= log_start_seq){
         log_file << "current sequence is:" << current_seq << endl ;
         // sampled objects
@@ -685,6 +686,8 @@ pair<uint64_t, uint32_t> LRBCache::rank() {
         log_file << endl;
         log_file << "evicted object score is:" << scores[index[0]] << endl;
     }
+     */
+
     return {keys[index[0]], poses[index[0]]};
 }
 
@@ -707,11 +710,13 @@ void LRBCache::evict() {
     auto &meta = in_cache_metas[old_pos];
 
     // fixme: add by me
+    /*
     if (log_start_seq >=0 && current_seq >= log_start_seq){
         //auto it = future_timestamps.find(key);
         // sequence_id, obj_id, past_timestamp, size
         log_file << current_seq << "," << key << ","<< meta._past_timestamp << "," << meta._size << endl;
     }
+     */
 
 
     if (memory_window <= current_seq - meta._past_timestamp) {
