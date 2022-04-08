@@ -247,13 +247,15 @@ bool LRBCache::lookup(const SimpleRequest &req) {
         ret = !list_idx;
     } else {
         ret = false;
-        // cache miss, log seq_num,obj_id
-        log_file << current_seq << "," << req.id << endl;
     }
 
     //sampling happens late to prevent immediate re-request
     if (is_sampling) {
         sample();
+    }
+    if (!ret) {
+        // cache miss, log seq_num,obj_id
+        log_file << current_seq << "," << req.id << endl;
     }
     //log_file << "current sequence num :" << current_seq << ", current request obj: " << req.id << ", is in cache? " << ret << endl;
     return ret;
