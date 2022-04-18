@@ -568,6 +568,8 @@ public:
                 sample_rate = stoul(it.second);
             } else if (it.first == "memory_window") {
                 memory_window = stoull(it.second);
+            } else if (it.first == "batch_size") {
+                batch_size = stoull(it.second);
             } else if (it.first == "max_n_past_timestamps") {
                 max_n_past_timestamps = (uint8_t) stoi(it.second);
             } else if (it.first == "batch_size") {
