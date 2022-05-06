@@ -186,26 +186,25 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                 ++training_data_distribution[1];
             }
             //batch_size ~>= batch_size
-            // fixme; fix retain
-            /*
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
-                trained = true;
-                //train_count += 1;
-                training_data->clear();
-            }
              */
             // fixme: retrain every memory_window
-            //if (current_seq % (memory_window - 1) == 0){
-            //    train();
-            //    train_count += 1;
-            //    training_data->clear();
-            //}
-            // original retrain
-            if (training_data->labels.size() >= batch_size) {
-                train();
-                training_data->clear();
+            if (use_seq_to_train == 0){
+                if (training_data->labels.size() >= batch_size) {
+                    train();
+                    training_data->clear();
+                }
             }
+            else{
+                if (current_seq > 0 && current_seq % batch_size == 0){
+                    train();
+                    training_data->clear();
+                }
+            }
+            // original retrain
+//            if (training_data->labels.size() >= batch_size) {
+//                train();
+//                training_data->clear();
+//            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -291,26 +290,23 @@ void LRBCache::forget() {
 
             // end
             //batch_size ~>= batch_size
-            // fixme; fix retain
-            /*
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
-                //train_count += 1;
-                trained = true;
-                training_data->clear();
+            if (use_seq_to_train == 0){
+                if (training_data->labels.size() >= batch_size) {
+                    train();
+                    training_data->clear();
+                }
             }
-             */
-            // fixme: retrain every memory_window
-            //if (current_seq % (memory_window - 1) == 0){
-            //    train();
-            //    train_count += 1;
-            //    training_data->clear();
-            //}
+            else{
+                if (current_seq > 0 && current_seq % batch_size == 0){
+                    train();
+                    training_data->clear();
+                }
+            }
             // original retrain
-            if (training_data->labels.size() >= batch_size) {
-                train();
-                training_data->clear();
-            }
+//            if (training_data->labels.size() >= batch_size) {
+//                train();
+//                training_data->clear();
+//            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }
@@ -733,25 +729,23 @@ void LRBCache::evict() {
             }
             //batch_size ~>= batch_size
             // fixme: fix retain
-            /*
-            if (current_seq >= (memory_window - 1) && !trained){
-                train();
-                trained = true;
-                //train_count += 1;
-                training_data->clear();
+            if (use_seq_to_train == 0){
+                if (training_data->labels.size() >= batch_size) {
+                    train();
+                    training_data->clear();
+                }
             }
-             */
-            // fixme: retrain every memory_window
-            //if (current_seq % (memory_window - 1) == 0){
-            //    train();
-            //    train_count += 1;
-            //    training_data->clear();
-            //}
+            else{
+                if (current_seq > 0 && current_seq % batch_size == 0){
+                    train();
+                    training_data->clear();
+                }
+            }
             // original retrain
-            if (training_data->labels.size() >= batch_size) {
-                train();
-                training_data->clear();
-            }
+//            if (training_data->labels.size() >= batch_size) {
+//                train();
+//                training_data->clear();
+//            }
             meta._sample_times.clear();
             meta._sample_times.shrink_to_fit();
         }

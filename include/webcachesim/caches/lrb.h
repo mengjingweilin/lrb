@@ -34,6 +34,7 @@ namespace lrb {
     uint8_t no_nwithin = 0;  // FIXME: added by xinyue
     uint8_t no_LRU = 0;  //FIXME: added by xinyue
     uint8_t log_start_seq = -1;  //Fixme: added by xinyue
+    uint8_t use_seq_to_train = 0;
     uint32_t current_seq = -1;
     uint8_t max_n_past_timestamps = 32;
     uint8_t max_n_past_distances = 31;
@@ -570,6 +571,8 @@ public:
                 memory_window = stoull(it.second);
             } else if (it.first == "batch_size") {
                 batch_size = stoull(it.second);
+            } else if (it.first == "use_seq_to_train") {
+                use_seq_to_train = (uint8_t) stoi(it.second);
             } else if (it.first == "max_n_past_timestamps") {
                 max_n_past_timestamps = (uint8_t) stoi(it.second);
             } else if (it.first == "batch_size") {
