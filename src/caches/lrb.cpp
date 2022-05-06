@@ -193,12 +193,6 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                     training_data->clear();
                 }
             }
-            else{
-                if (current_seq > 0 && current_seq % batch_size == 0){
-                    train();
-                    training_data->clear();
-                }
-            }
             // original retrain
 //            if (training_data->labels.size() >= batch_size) {
 //                train();
@@ -256,6 +250,12 @@ bool LRBCache::lookup(const SimpleRequest &req) {
         log_file << current_seq << "," << req.id << endl;
     }
     //log_file << "current sequence num :" << current_seq << ", current request obj: " << req.id << ", is in cache? " << ret << endl;
+    if (use_seq_to_train > 0){
+        if (current_seq > 0 && current_seq % batch_size == 0){
+            train();
+            training_data->clear();
+        }
+    }
     return ret;
 }
 
@@ -291,12 +291,6 @@ void LRBCache::forget() {
             //batch_size ~>= batch_size
             if (use_seq_to_train == 0){
                 if (training_data->labels.size() >= batch_size) {
-                    train();
-                    training_data->clear();
-                }
-            }
-            else{
-                if (current_seq > 0 && current_seq % batch_size == 0){
                     train();
                     training_data->clear();
                 }
@@ -730,12 +724,6 @@ void LRBCache::evict() {
             // fixme: fix retain
             if (use_seq_to_train == 0){
                 if (training_data->labels.size() >= batch_size) {
-                    train();
-                    training_data->clear();
-                }
-            }
-            else{
-                if (current_seq > 0 && current_seq % batch_size == 0){
                     train();
                     training_data->clear();
                 }
