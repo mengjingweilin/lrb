@@ -186,7 +186,6 @@ bool LRBCache::lookup(const SimpleRequest &req) {
                 ++training_data_distribution[1];
             }
             //batch_size ~>= batch_size
-             */
             // fixme: retrain every memory_window
             if (use_seq_to_train == 0){
                 if (training_data->labels.size() >= batch_size) {
