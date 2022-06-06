@@ -217,11 +217,13 @@ bsoncxx::builder::basic::document FrameWork::simulate() {
                 update_metric_req(rt_byte_miss, rt_obj_miss, size);
                 webcache->admit(*req);
                 hit_log_file << 0 << endl;
+            } else{
+                hit_log_file << 1 << endl;
             }
         } else {
             update_metric_req(byte_miss, obj_miss, size);
             update_metric_req(rt_byte_miss, rt_obj_miss, size);
-            hit_log_file << 1 << endl;
+            hit_log_file << 0 << endl;
         }
 
         ++seq;
