@@ -36,6 +36,7 @@ public:
     std::ifstream infile;
     int64_t n_early_stop = -1;  //-1: no stop
     int64_t seq_start = 0;
+    std::ofstream hit_log_file;  // LHR real_hit log file type, contains 0 or 1 in each line. 1 means request hits, 0 otherwise.
 
     std::string _trace_file;
     std::string _cache_type;

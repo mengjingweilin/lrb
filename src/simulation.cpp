@@ -28,6 +28,8 @@ FrameWork::FrameWork(const string &trace_file, const string &cache_type, const u
     _cache_size = cache_size;
     is_offline = offline_algorithms.count(_cache_type);
 
+    hit_log_file.open("/tmp/hits_log_" + cache_type, std::ofstream::out);
+
     for (auto it = params.cbegin(); it != params.cend();) {
         if (it->first == "uni_size") {
             uni_size = static_cast<bool>(stoi(it->second));
@@ -212,12 +214,14 @@ bsoncxx::builder::basic::document FrameWork::simulate() {
             bool is_hit = webcache->lookup(*req);
             if (!is_hit) {
                 update_metric_req(byte_miss, obj_miss, size);
-                update_metric_req(rt_byte_miss, rt_obj_miss, size)
+                update_metric_req(rt_byte_miss, rt_obj_miss, size);
                 webcache->admit(*req);
+                hit_log_file << 0 << endl;
             }
         } else {
             update_metric_req(byte_miss, obj_miss, size);
-            update_metric_req(rt_byte_miss, rt_obj_miss, size)
+            update_metric_req(rt_byte_miss, rt_obj_miss, size);
+            hit_log_file << 1 << endl;
         }
 
         ++seq;
